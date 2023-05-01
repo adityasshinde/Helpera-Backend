@@ -56,8 +56,8 @@ const signup = async (req, res) => {
       .catch(async () => {
         console.log("user does'nt exist");
         if (password != confirmPassword) {
-          console.log("password does'nt match");
-          return res.status(400).json({ message: "password dont match" });
+          console.log("password doesn't match");
+          return res.status(400).json({ message: "password doesn't match" });
         }
         const haspassword = await bcrypt.hash(password, 12);
         console.log(haspassword);
