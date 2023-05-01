@@ -85,4 +85,35 @@ const signup = async (req, res) => {
   }
 };
 
-module.exports = { signin, signup };
+const changePassword = async (req, res) => {
+  const { email, password } = req.body;
+  const hashPassword = await bcrypt.hash(password, 12);
+  try {
+    console.log(email);
+    loginUser
+      .findOneAndUpdate({ email: email }, { password: hashPassword })
+      .then((user) => {
+        res.status(200).json({ password: hashPassword });
+        //        console.log(bcrypt(hashPassword));
+      });
+  } catch {}
+};
+
+module.exports = { signin, signup, changePassword };
+
+// try {
+//   loginUser
+//     .findOneAndUpdate(
+//       { email: email },
+//       { password: hashPassword },
+//       { new: true }
+//     )
+//     .then(() => {
+//       res.status(200).json({ message: "password reset" });
+//     })
+//     .catch(() => {
+//       res.status(404).json({ message: "user doesnt exist" });
+//     });
+// } catch {
+//   res.status(500).status({ message: "something went wrong" });
+// }
