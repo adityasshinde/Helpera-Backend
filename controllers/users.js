@@ -47,7 +47,7 @@ const signup = async (req, res) => {
   try {
     console.log(email);
     await loginUser
-      .findOne({ email })
+      .findOne({ username })
       .then(async (existingUser) => {
         return res.status(400).json({
           message: ` ${existingUser.username} and ${existingUser.email} user already exist`,
@@ -68,7 +68,7 @@ const signup = async (req, res) => {
           name: `${firstName}+${lastName}`,
           dob: dob,
           address: address,
-          phoneno: phoneno,
+          phoneNo: phoneno,
         });
         console.log("user create");
         const token = jwt.sign(
