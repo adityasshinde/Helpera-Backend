@@ -19,7 +19,8 @@ const loginSchema = mongoose.Schema({
   },
   phoneNo: {
     type: Number,
-    length: 10,
+    minlength: 10,
+    maxlength: 10,
     require: true,
   },
   Age: {
@@ -31,6 +32,68 @@ const loginSchema = mongoose.Schema({
   address: { type: String, require: true },
 });
 
+const campaignSchema = mongoose.Schema({
+  CampaignName: {
+    type: String,
+    require: true,
+  },
+  CampaignType: {
+    type: [String],
+    require: true,
+  },
+  Email: {
+    type: String,
+    require: true,
+  },
+  OrgName: {
+    type: String,
+    require: true,
+  },
+  CampHeadName: {
+    type: String,
+    require: true,
+  },
+  ContactNo: {
+    type: Number,
+    require: true,
+  },
+  VolunterNeeded: {
+    type: Number,
+    require: true,
+  },
+  Address: {
+    type: String,
+    require: true,
+  },
+  StartDate: {
+    type: String,
+    require: true,
+  },
+  EndDate: {
+    type: String,
+    require: true,
+  },
+  image: {
+    type: String,
+  },
+  file: {
+    type: String,
+  },
+  comment: {
+    type: [String],
+  },
+  joined: {
+    type: [String],
+  },
+  image: {
+    data: Buffer,
+    contentType: String,
+  },
+  brochure: {
+    data: Buffer,
+    contentType: String,
+  },
+});
 const loginUser = mongoose.model("loginUser", loginSchema);
-
-module.exports = loginUser;
+const CreateCampaign = mongoose.model("CreateCampaign", campaignSchema);
+module.exports = { loginUser, CreateCampaign };

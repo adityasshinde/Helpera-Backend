@@ -1,15 +1,16 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const loginUser = require("../models/details");
+const { loginUser } = require("../models/details");
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
-
+  console.log(email);
   try {
     await loginUser
       .findOne({ email })
       .then(async (existingUser) => {
+        console.log(`existing user ${existingUser.email}`);
         const isPasswordCorrect = await bcrypt.compare(
           password,
           existingUser.password
@@ -61,24 +62,46 @@ const signup = async (req, res) => {
         }
         const haspassword = await bcrypt.hash(password, 12);
         console.log(haspassword);
-        const result = await loginUser.create({
-          username,
-          email,
-          password: haspassword,
-          name: `${firstName}+${lastName}`,
-          dob: dob,
-          address: address,
-          phoneNo: phoneno,
-        });
-        console.log("user create");
-        const token = jwt.sign(
-          { email: result.email, id: result._id },
-          "test",
-          {
-            expiresIn: "1h",
-          }
-        );
-        res.status(200).json({ result, token });
+
+        console.log(phoneno.toString().length);
+        console.log(username.length);
+        console.log(typeof dob);
+        var birthdate = dob.split("-");
+        console.log(birthdate);
+        var year = parseInt(birthdate[2]);
+        console.log(typeof year, year);
+        const today = new Date();
+        let curYear = today.getFullYear();
+        var dif = curYear - year;
+        console.log(typeof dif, dif);
+        // console.log(dobYear - year);
+        if (
+          phoneno.toString().length === 10 &&
+          username.length >= 4 &&
+          dif > 18
+        ) {
+          console.log("hello");
+          const result = await loginUser.create({
+            username,
+            email,
+            password: haspassword,
+            name: `${firstName}+${lastName}`,
+            dob: dob,
+            address: address,
+            phoneNo: phoneno,
+          });
+          console.log("user create");
+          const token = jwt.sign(
+            { email: result.email, id: result._id },
+            "test",
+            {
+              expiresIn: "1h",
+            }
+          );
+          res.status(200).json({ result, token });
+        } else {
+          res.status(500).json({ message: "something is wrong" });
+        }
       });
   } catch {
     res.status(500).json({ message: "something went wrong" });
