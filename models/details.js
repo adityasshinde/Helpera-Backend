@@ -30,6 +30,14 @@ const loginSchema = mongoose.Schema({
   dob: { type: String, require: true },
   campaign: { type: [String], require: true },
   address: { type: String, require: true },
+  SecurityQuestion: {
+    type: String,
+    require: true,
+  },
+  role: {
+    type: Number,
+    require: true,
+  },
 });
 
 const campaignSchema = mongoose.Schema({
@@ -84,6 +92,7 @@ const campaignSchema = mongoose.Schema({
   },
   joined: {
     type: [String],
+    default: [],
   },
   image: {
     data: Buffer,

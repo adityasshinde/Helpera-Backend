@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const { loginUser } = require("../models/details");
+const { loginUser, CreateCampaign } = require("../models/details");
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
@@ -44,6 +44,8 @@ const signup = async (req, res) => {
     dob,
     address,
     phoneno,
+    sques,
+    role,
   } = req.body;
   try {
     console.log(email);
@@ -89,6 +91,8 @@ const signup = async (req, res) => {
             dob: dob,
             address: address,
             phoneNo: phoneno,
+            SecurityQuestion: sques,
+            role: role,
           });
           console.log("user create");
           const token = jwt.sign(
@@ -122,7 +126,24 @@ const changePassword = async (req, res) => {
   } catch {}
 };
 
-module.exports = { signin, signup, changePassword };
+const userDetail = (req, res) => {
+  const { id } = req.params;
+  if (!req.userId) {
+    return res.json({ message: "Unauthenticated" });
+  }
+  try {
+    console.log(req.userId === id);
+    loginUser.findById(id).then((user) => {
+      //CreateCampaign.findById({ $ne: id }).then((campaign) => {
+      res.status(200).json({ user });
+      // });
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+module.exports = { signin, signup, changePassword, userDetail };
 
 // try {
 //   loginUser
