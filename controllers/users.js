@@ -127,13 +127,11 @@ const changePassword = async (req, res) => {
 };
 
 const userDetail = (req, res) => {
-  const { id } = req.params;
   if (!req.userId) {
     return res.json({ message: "Unauthenticated" });
   }
   try {
-    console.log(req.userId === id);
-    loginUser.findById(id).then((user) => {
+    loginUser.findById(req.userId).then((user) => {
       //CreateCampaign.findById({ $ne: id }).then((campaign) => {
       res.status(200).json({ user });
       // });
