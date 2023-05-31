@@ -16,5 +16,5 @@ router.post("/signup", signup);
 //router.route("/forgotPassword").patch(changePassword);
 router.patch("/forgotPassword", changePassword);
 //router.get(":/id/userDetail", auth, userDetail);
-router.route("/:id/userDetail").get(auth, userDetail);
+router.route("/userDetail").get(auth, userDetail);
 module.exports = router;
