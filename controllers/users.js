@@ -18,11 +18,11 @@ const signin = async (req, res) => {
         if (!isPasswordCorrect) {
           return res.status(404).json({ message: "password is wrong" });
         }
+        console.log(existingUser);
         const token = jwt.sign(
           {
-            email: existingUser.email,
             id: existingUser._id,
-            role: existingUser._role,
+            role: existingUser.role,
           },
           "test",
           { expiresIn: "1h" }
@@ -105,7 +105,10 @@ const signup = async (req, res) => {
           });
           console.log("user create");
           const token = jwt.sign(
-            { email: result.email, id: result._id, role: existingUser._role },
+            {
+              id: existingUser._id,
+              role: existingUser.role,
+            },
             "test",
             {
               expiresIn: "1h",
@@ -122,12 +125,15 @@ const signup = async (req, res) => {
 };
 
 const changePassword = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, SecurityQuestion } = req.body;
   const hashPassword = await bcrypt.hash(password, 12);
   try {
     console.log(email);
     loginUser
-      .findOneAndUpdate({ email: email }, { password: hashPassword })
+      .findOneAndUpdate(
+        { $and: [{ email: email }, { SecurityQuestion: SecurityQuestion }] },
+        { password: hashPassword }
+      )
       .then((user) => {
         res.status(200).json({ password: hashPassword });
         //        console.log(bcrypt(hashPassword));
@@ -196,7 +202,7 @@ const signUpOrg = async (req, res) => {
           console.log("user create");
           console.log(result);
           const token = jwt.sign(
-            { email: result.email, id: result._id, role: existingUser._role },
+            { id: result._id, role: result.role },
             "test",
             {
               expiresIn: "1h",

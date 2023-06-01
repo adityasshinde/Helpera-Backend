@@ -3,7 +3,6 @@ const { CreateCampaign } = require("../models/details");
 const multer = require("multer");
 const url = require("url");
 const addcampaign = async (req, res) => {
-  req.userId;
   const post = req.body;
   const finalPost = { ...post, CreatedBYId: req.userId };
   const newPost = new CreateCampaign(finalPost);
