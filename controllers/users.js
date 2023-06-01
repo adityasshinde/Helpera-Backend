@@ -118,16 +118,27 @@ const signup = async (req, res) => {
 };
 
 const changePassword = async (req, res) => {
-  const { email, password } = req.body;
+  console.log(req.body)
+  const { email, password,securityQuestion } = req.body;
   const hashPassword = await bcrypt.hash(password, 12);
   try {
     console.log(email);
-    loginUser
+    loginUser.findOne({ email: email }).then((user)=>{
+      if(securityQuestion===user.SecurityQuestion){
+        loginUser
       .findOneAndUpdate({ email: email }, { password: hashPassword })
       .then((user) => {
         res.status(200).json({ password: hashPassword });
         //        console.log(bcrypt(hashPassword));
+      })
+      }else{
+        res.status(400).json({message:"email and security question doesnot match"})
+      }
+    })
+    .catch(async () => {
+        return res.status(400).json({ message: "user doesn't exist" });
       });
+   ;
   } catch {}
 };
 
