@@ -4,7 +4,9 @@ const multer = require("multer");
 const url = require("url");
 const addcampaign = async (req, res) => {
   const post = req.body;
+  console.log(post);
   const finalPost = { ...post, CreatedBYId: req.userId };
+  console.log(finalPost);
   const newPost = new CreateCampaign(finalPost);
   try {
     await newPost.save();

@@ -125,13 +125,13 @@ const signup = async (req, res) => {
 };
 
 const changePassword = async (req, res) => {
-  const { email, password, SecurityQuestion } = req.body;
+  const { email, password, securityQuestion } = req.body;
   const hashPassword = await bcrypt.hash(password, 12);
   try {
     console.log(email);
     loginUser
       .findOneAndUpdate(
-        { $and: [{ email: email }, { SecurityQuestion: SecurityQuestion }] },
+        { $and: [{ email: email }, { SecurityQuestion: securityQuestion }] },
         { password: hashPassword }
       )
       .then((user) => {

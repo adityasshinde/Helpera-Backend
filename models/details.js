@@ -52,7 +52,6 @@ const campaignSchema = mongoose.Schema({
     type: [String],
     require: true,
   },
-
   CreatedBYId: {
     type: String,
     require: true,
@@ -65,7 +64,6 @@ const campaignSchema = mongoose.Schema({
     type: String,
     require: true,
   },
-
   CampHeadName: {
     type: String,
     require: true,
@@ -74,7 +72,7 @@ const campaignSchema = mongoose.Schema({
     type: Number,
     require: true,
   },
-  VolunterNeeded: {
+  VoluntersNeeded: {
     type: Number,
     require: true,
   },
@@ -99,7 +97,7 @@ const campaignSchema = mongoose.Schema({
   comment: {
     type: [String],
   },
-  joined: {
+  VolunteersJoined: {
     type: [String],
     default: [],
   },
