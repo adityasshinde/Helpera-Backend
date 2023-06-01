@@ -18,7 +18,7 @@ const signin = async (req, res) => {
         if (!isPasswordCorrect) {
           return res.status(404).json({ message: "password is wrong" });
         }
-        console.log(existingUser);
+        console.log(existingUser.role);
         const token = jwt.sign(
           {
             id: existingUser._id,
@@ -202,7 +202,7 @@ const signUpOrg = async (req, res) => {
           console.log("user create");
           console.log(result);
           const token = jwt.sign(
-            { id: result._id, role: result.role },
+            { id: existingUser._id, role: result.role },
             "test",
             {
               expiresIn: "1h",
