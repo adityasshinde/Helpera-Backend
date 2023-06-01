@@ -2,17 +2,6 @@ const { default: mongoose } = require("mongoose");
 const { CreateCampaign } = require("../models/details");
 const multer = require("multer");
 const url = require("url");
-const Storage = multer.diskStorage({
-  destination: "uploads",
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + "-" + uniqueSuffix);
-  },
-});
-
-const upload = multer({
-  storage: Storage,
-}).single("CampaignImg");
 const addcampaign = async (req, res) => {
   const post = req.body;
   const finalPost={...post,approvedVolunteers:[],volunteersApplied:[],orgId:req.userId}
