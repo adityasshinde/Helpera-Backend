@@ -19,7 +19,11 @@ const signin = async (req, res) => {
           return res.status(404).json({ message: "password is wrong" });
         }
         const token = jwt.sign(
-          { email: existingUser.email, id: existingUser._id },
+          {
+            email: existingUser.email,
+            id: existingUser._id,
+            role: existingUser._role,
+          },
           "test",
           { expiresIn: "1h" }
         );
@@ -34,8 +38,8 @@ const signin = async (req, res) => {
 };
 
 const signup = async (req, res) => {
-  if (req.body.role===8) {
-    await signUpOrg(req,res);
+  if (req.body.role === 8) {
+    await signUpOrg(req, res);
     return;
   }
   const {
@@ -91,9 +95,9 @@ const signup = async (req, res) => {
             username,
             email,
             password: haspassword,
-            name: `${firstName}+${lastName}`,
+            name: `${firstName} ${lastName}`,
             dob: dob,
-            Age:dif,
+            Age: dif,
             address: address,
             phoneNo: phoneno,
             SecurityQuestion: securityQuestion,
@@ -101,7 +105,7 @@ const signup = async (req, res) => {
           });
           console.log("user create");
           const token = jwt.sign(
-            { email: result.email, id: result._id },
+            { email: result.email, id: result._id, role: existingUser._role },
             "test",
             {
               expiresIn: "1h",
@@ -146,7 +150,7 @@ const userDetail = (req, res) => {
   }
 };
 
-const signUpOrg=async(req,res)=>{
+const signUpOrg = async (req, res) => {
   const {
     username,
     email,
@@ -156,7 +160,7 @@ const signUpOrg=async(req,res)=>{
     address,
     phoneno,
     role,
-    securityQuestion
+    securityQuestion,
   } = req.body;
   try {
     console.log(email);
@@ -178,10 +182,7 @@ const signUpOrg=async(req,res)=>{
 
         console.log(phoneno.toString().length);
         console.log(username.length);
-        if (
-          phoneno.toString().length === 10 &&
-          username.length >= 4
-        ) {
+        if (phoneno.toString().length === 10 && username.length >= 4) {
           const result = await loginUser.create({
             username,
             email,
@@ -193,9 +194,9 @@ const signUpOrg=async(req,res)=>{
             role: role,
           });
           console.log("user create");
-          console.log(result)
+          console.log(result);
           const token = jwt.sign(
-            { email: result.email, id: result._id },
+            { email: result.email, id: result._id, role: existingUser._role },
             "test",
             {
               expiresIn: "1h",
@@ -209,7 +210,7 @@ const signUpOrg=async(req,res)=>{
   } catch {
     res.status(500).json({ message: "something went wrong" });
   }
-}
+};
 module.exports = { signin, signup, changePassword, userDetail };
 
 // try {

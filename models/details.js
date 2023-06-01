@@ -24,7 +24,7 @@ const loginSchema = mongoose.Schema({
     require: true,
   },
   Age: {
-    type: Number
+    type: Number,
   },
   dob: { type: String },
   campaigns: { type: [String], require: true },
@@ -52,6 +52,11 @@ const campaignSchema = mongoose.Schema({
     type: [String],
     require: true,
   },
+
+  CreatedBYId: {
+    type: String,
+    require: true,
+  },
   Email: {
     type: String,
     require: true,
@@ -60,6 +65,7 @@ const campaignSchema = mongoose.Schema({
     type: String,
     require: true,
   },
+
   CampHeadName: {
     type: String,
     require: true,
