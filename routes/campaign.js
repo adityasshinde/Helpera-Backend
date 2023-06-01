@@ -6,8 +6,9 @@ const {
   DeleteCampaign,
   GetCampaign,
 } = require("../controllers/campaign");
-router.route("/addcampaign").post(addcampaign);
-router.route("/updatePost/:id").patch(UpdateCampaign);
-router.route("/DeleteCampaign/:id").delete(DeleteCampaign);
+const auth=require('../middlewares/auth');
+router.route("/addcampaign").post(auth,addcampaign);
+router.route("/updatePost/:id").patch(auth,UpdateCampaign);
+router.route("/DeleteCampaign/:id").delete(auth,DeleteCampaign);
 router.route("/FindAllCampaign").get(GetCampaign);
 module.exports = router;

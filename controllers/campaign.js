@@ -15,7 +15,8 @@ const upload = multer({
 }).single("CampaignImg");
 const addcampaign = async (req, res) => {
   const post = req.body;
-  const newPost = new CreateCampaign(post);
+  const finalPost={...post,approvedVolunteers:[],volunteersApplied:[],orgId:req.userId}
+  const newPost = new CreateCampaign(finalPost);
   try {
     await newPost.save();
     res.status(201).json({ newPost });
