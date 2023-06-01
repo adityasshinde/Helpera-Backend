@@ -34,6 +34,10 @@ const signin = async (req, res) => {
 };
 
 const signup = async (req, res) => {
+  if (req.body.role===8) {
+    await signUpOrg(req,res);
+    return;
+  }
   const {
     username,
     email,
@@ -44,7 +48,7 @@ const signup = async (req, res) => {
     dob,
     address,
     phoneno,
-    sques,
+    securityQuestion,
     role,
   } = req.body;
   try {
@@ -57,7 +61,7 @@ const signup = async (req, res) => {
         });
       })
       .catch(async () => {
-        console.log("user does'nt exist");
+        console.log("user doesn't exist");
         if (password != confirmPassword) {
           console.log("password doesn't match");
           return res.status(400).json({ message: "password doesn't match" });
@@ -89,9 +93,10 @@ const signup = async (req, res) => {
             password: haspassword,
             name: `${firstName}+${lastName}`,
             dob: dob,
+            Age:dif,
             address: address,
             phoneNo: phoneno,
-            SecurityQuestion: sques,
+            SecurityQuestion: securityQuestion,
             role: role,
           });
           console.log("user create");
@@ -141,6 +146,70 @@ const userDetail = (req, res) => {
   }
 };
 
+const signUpOrg=async(req,res)=>{
+  const {
+    username,
+    email,
+    password,
+    confirmPassword,
+    organizationName,
+    address,
+    phoneno,
+    role,
+    securityQuestion
+  } = req.body;
+  try {
+    console.log(email);
+    await loginUser
+      .findOne({ username })
+      .then(async (existingUser) => {
+        return res.status(400).json({
+          message: ` ${existingUser.username} and ${existingUser.email} user already exist`,
+        });
+      })
+      .catch(async () => {
+        console.log("user doesn't exist");
+        if (password != confirmPassword) {
+          console.log("password doesn't match");
+          return res.status(400).json({ message: "password doesn't match" });
+        }
+        const haspassword = await bcrypt.hash(password, 12);
+        console.log(haspassword);
+
+        console.log(phoneno.toString().length);
+        console.log(username.length);
+        if (
+          phoneno.toString().length === 10 &&
+          username.length >= 4
+        ) {
+          const result = await loginUser.create({
+            username,
+            email,
+            password: haspassword,
+            name: organizationName,
+            address: address,
+            phoneNo: phoneno,
+            SecurityQuestion: securityQuestion,
+            role: role,
+          });
+          console.log("user create");
+          console.log(result)
+          const token = jwt.sign(
+            { email: result.email, id: result._id },
+            "test",
+            {
+              expiresIn: "1h",
+            }
+          );
+          res.status(200).json({ result, token });
+        } else {
+          res.status(500).json({ message: "something is wrong" });
+        }
+      });
+  } catch {
+    res.status(500).json({ message: "something went wrong" });
+  }
+}
 module.exports = { signin, signup, changePassword, userDetail };
 
 // try {

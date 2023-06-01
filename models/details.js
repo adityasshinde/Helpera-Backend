@@ -24,11 +24,10 @@ const loginSchema = mongoose.Schema({
     require: true,
   },
   Age: {
-    type: Number,
-    require: true,
+    type: Number
   },
-  dob: { type: String, require: true },
-  campaign: { type: [String], require: true },
+  dob: { type: String },
+  campaigns: { type: [String], require: true },
   address: { type: String, require: true },
   SecurityQuestion: {
     type: String,
@@ -36,6 +35,10 @@ const loginSchema = mongoose.Schema({
   },
   role: {
     type: Number,
+    require: true,
+  },
+  name: {
+    type: String,
     require: true,
   },
 });
