@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-const { CreateCampaign } = require("../models/details");
+const { CreateCampaign, loginUser } = require("../models/details");
 const multer = require("multer");
 const url = require("url");
 const addcampaign = async (req, res) => {
@@ -54,4 +54,39 @@ const GetCampaign = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
-module.exports = { addcampaign, UpdateCampaign, DeleteCampaign, GetCampaign };
+
+const GetJoinedCampaign = async (req, res) => {
+  try {
+    const joinedCampaign = await CreateCampaign.find({
+      //CreatedBYId
+      VolunteersJoined: req.userId,
+    })
+      .then((user) => {
+        res.status(200).json(user);
+      })
+      .catch((error) => {
+        res.status(404).json({ message: "Not registerd to any campaign" });
+      });
+  } catch {
+    console.log("something went wrong...");
+  }
+};
+
+const UnregisteredCampaign = async (req, res) => {
+  try {
+    console.log(req.userId);
+    CreateCampaign.find({ VolunteersJoined: { $ne: req.userId } }).then(
+      (Campaign) => {
+        res.status(200).json(Campaign);
+      }
+    );
+  } catch {}
+};
+module.exports = {
+  addcampaign,
+  UpdateCampaign,
+  DeleteCampaign,
+  GetCampaign,
+  GetJoinedCampaign,
+  UnregisteredCampaign,
+};
