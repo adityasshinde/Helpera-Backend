@@ -7,6 +7,7 @@ const {
   GetCampaign,
   GetJoinedCampaign,
   UnregisteredCampaign,
+  joinCampaign,
 } = require("../controllers/campaign");
 const auth = require("../middlewares/auth");
 const roles = require("../middlewares/roles");
@@ -16,4 +17,5 @@ router.route("/DeleteCampaign/:id").delete(auth, roles, DeleteCampaign);
 router.route("/FindAllCampaign").get(GetCampaign);
 router.route("/GetJoinedCampaign").get(auth, GetJoinedCampaign);
 router.route("/UnregisteredCampaign").get(auth, UnregisteredCampaign);
+router.route("/joinCampaign").post(joinCampaign);
 module.exports = router;
