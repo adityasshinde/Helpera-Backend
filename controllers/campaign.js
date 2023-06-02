@@ -112,11 +112,11 @@ const joinCampaign = async (req, res) => {
     );
   }
   const Volunteer = await loginUser.findById(uID);
-  let ar = Volunteer.CampaignJoined;
+  let ar = Volunteer.campaigns;
   ar.push(cID);
   loginUser.findByIdAndUpdate(
     { _id: uID },
-    { CampaignJoined: ar },
+    { campaigns: ar },
     { new: true },
     () => {
       res.json({ status: "Volunteer Joined" });
