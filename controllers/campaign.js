@@ -96,18 +96,19 @@ const joinCampaign = async (req, res) => {
   const campaign = await CreateCampaign.findById(cID);
   let noVolunteer = campaign.VoluntersNeeded;
   if (noVolunteer <= 0) {
-    return res.json({ status: "No More volunteer needed" });
+    return res.json({ status: 404, message: "No More volunteer needed" });
   } else {
-    noVolunteer = noVolunteer - 1;
     let ar = campaign.VolunteersJoined;
-    if (check(cID, ar)) return res.json({ status: "Already Joined" });
+    if (check(uID, ar))
+      return res.json({ status: 403, message: "Already Joined" });
+    noVolunteer = noVolunteer - 1;
     ar.push(uID);
     CreateCampaign.findByIdAndUpdate(
       { _id: cID },
       { VoluntersNeeded: noVolunteer, VolunteersJoined: ar },
       { new: true },
       () => {
-        res.json({ status: "Volunteer Joined" });
+        res.json({ status: 200, message: "Volunteer Joined" });
       }
     );
   }
