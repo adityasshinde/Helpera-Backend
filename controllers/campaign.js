@@ -96,33 +96,29 @@ const joinCampaign = async (req, res) => {
   const campaign = await CreateCampaign.findById(cID);
   let noVolunteer = campaign.VoluntersNeeded;
   if (noVolunteer <= 0) {
-    return res.json({ status: 404, message: "No More volunteer needed" });
+    return res.status(403).json({ message: "No More volunteer needed" });
   } else {
     let ar = campaign.VolunteersJoined;
     if (check(uID, ar))
-      return res.json({ status: 403, message: "Already Joined" });
+      return res.status(403).json({ message: "Already Joined" });
     noVolunteer = noVolunteer - 1;
     ar.push(uID);
     CreateCampaign.findByIdAndUpdate(
       { _id: cID },
       { VoluntersNeeded: noVolunteer, VolunteersJoined: ar },
-      { new: true },
-      () => {
-        res.json({ status: 200, message: "Volunteer Joined" });
-      }
-    );
+      { new: true }
+    ).then(() => {
+      res.status(200).json({ message: "Volunteer added in campaign" });
+    });
   }
   const Volunteer = await loginUser.findById(uID);
   let ar = Volunteer.campaigns;
   ar.push(cID);
-  loginUser.findByIdAndUpdate(
-    { _id: uID },
-    { campaigns: ar },
-    { new: true },
-    () => {
-      res.json({ status: "Volunteer Joined" });
-    }
-  );
+  loginUser
+    .findByIdAndUpdate({ _id: uID }, { campaigns: ar }, { new: true })
+    .then(() => {
+      res.status(200).json({ message: "Volunteer Joined" });
+    });
 };
 
 module.exports = {
