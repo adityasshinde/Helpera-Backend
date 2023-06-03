@@ -2,15 +2,27 @@ const { default: mongoose } = require("mongoose");
 const { CreateCampaign, loginUser } = require("../models/details");
 const multer = require("multer");
 const url = require("url");
+const moment = require("moment");
+
 const addcampaign = async (req, res) => {
   const post = req.body;
+  const { startDate, endDate } = req.body;
+  const { sdate } = startDate.split("-");
+  const { edate } = endDate.split("-");
+  let datedifference = Math.abs(edate[0] - sdate[0]);
+  let monthdifference = Math.abs(edate[1] - sdate[1]);
+  let yeardifference = Math.abs(edate[2] - sdate[2]);
   console.log(post);
   const finalPost = { ...post, CreatedBYId: req.userId };
   console.log(finalPost);
   const newPost = new CreateCampaign(finalPost);
   try {
-    await newPost.save();
-    res.status(201).json({ newPost });
+    if (yeardifference == 0 && monthdifference >= 0 && datedifference >= 1) {
+      await newPost.save();
+      res.status(201).json({ newPost });
+    } else {
+      res.status(409).json({ message: "invalid dates are given" });
+    }
   } catch (error) {
     res.status(409).json({ message: error.message });
   }
@@ -121,6 +133,35 @@ const joinCampaign = async (req, res) => {
     });
 };
 
+const SearchCampaign = async (req, res) => {
+  const searchTerm = req.query.search;
+  try {
+    // Find campaigns that match the search term
+    await CreateCampaign.find({
+      CampaignName: { $regex: searchTerm, $options: "i" },
+    }).then((campaign) => {
+      res.status(201).json(campaign);
+    });
+  } catch (err) {
+    console.error("Error finding campaigns:", err);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+const SearchOrganization = async (req, res) => {
+  const searchTerm = "testOrg Sanstha";
+  try {
+    // Find campaigns that match the search term
+    await CreateCampaign.find({
+      OrgName: { $regex: searchTerm, $options: "i" },
+    }).then((organization) => {
+      res.status(201).json(organization);
+    });
+  } catch (err) {
+    console.error("Error finding campaigns:", err);
+    res.status(500).send("Internal Server Error");
+  }
+};
 module.exports = {
   addcampaign,
   UpdateCampaign,
@@ -129,4 +170,6 @@ module.exports = {
   GetJoinedCampaign,
   UnregisteredCampaign,
   joinCampaign,
+  SearchCampaign,
+  SearchOrganization,
 };

@@ -8,6 +8,8 @@ const {
   GetJoinedCampaign,
   UnregisteredCampaign,
   joinCampaign,
+  SearchCampaign,
+  SearchOrganization,
 } = require("../controllers/campaign");
 const auth = require("../middlewares/auth");
 const roles = require("../middlewares/roles");
@@ -18,4 +20,6 @@ router.route("/FindAllCampaign").get(GetCampaign);
 router.route("/GetJoinedCampaign").get(auth, GetJoinedCampaign);
 router.route("/UnregisteredCampaign").get(auth, UnregisteredCampaign);
 router.route("/joinCampaign").post(auth, joinCampaign);
+router.route("/SearchCampaign").get(SearchCampaign);
+router.route("/SearchOrganization").get(SearchOrganization);
 module.exports = router;
