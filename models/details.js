@@ -41,6 +41,18 @@ const loginSchema = mongoose.Schema({
     type: String,
     require: true,
   },
+  rating: {
+    type: Number,
+    default: 0,
+  },
+  reviewCount: {
+    type: Number,
+    default: 0,
+  },
+  Total: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const campaignSchema = mongoose.Schema({
