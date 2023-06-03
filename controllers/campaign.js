@@ -162,6 +162,26 @@ const SearchOrganization = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
+const rateVolunteer = async (req, res) => {
+  const uID = req.userId;
+  const rating = req.body.rating;
+  const objectId = new ObjectId(uID);
+  const usr = await loginUser.findOne({ _id: objectId });
+
+  let prevReviewCnt = usr.reviewCount;
+  let total = usr.Total;
+  total = total + rating;
+  prevReviewCnt = prevReviewCnt + 1;
+  let newRating = total / prevReviewCnt;
+  newRating = Math.floor(newRating);
+  loginUser.updateOne(
+    { _id: objectId },
+    { $set: { rating: newRating, reviewCount: prevReviewCnt, Total: total } }
+  );
+  res.status(200).json({ message: "Successfully Rated" });
+};
+
 module.exports = {
   addcampaign,
   UpdateCampaign,
@@ -172,4 +192,5 @@ module.exports = {
   joinCampaign,
   SearchCampaign,
   SearchOrganization,
+  rateVolunteer,
 };
