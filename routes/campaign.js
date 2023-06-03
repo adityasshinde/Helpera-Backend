@@ -17,5 +17,5 @@ router.route("/DeleteCampaign/:id").delete(auth, roles, DeleteCampaign);
 router.route("/FindAllCampaign").get(GetCampaign);
 router.route("/GetJoinedCampaign").get(auth, GetJoinedCampaign);
 router.route("/UnregisteredCampaign").get(auth, UnregisteredCampaign);
-router.route("/joinCampaign").post(joinCampaign);
+router.route("/joinCampaign").post(auth, joinCampaign);
 module.exports = router;
