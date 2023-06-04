@@ -13,18 +13,18 @@ cloudinary.config({
 
 const addcampaign = async (req, res) => {
   const post = req.body;
-  const { startDate, endDate } = req.body;
-  const sdate = startDate.split("-");
-  const edate = endDate.split("-");
-  let datedifference = Math.abs(edate[0] - sdate[0]);
-  let monthdifference = Math.abs(edate[1] - sdate[1]);
-  let yeardifference = Math.abs(edate[2] - sdate[2]);
-  console.log(post);
+  const { StartDate, EndDate } = req.body;
+  const sdate = StartDate.split("-");
+  const edate = EndDate.split("-");
+  console.log(sdate);
+  console.log(edate);
+  let yeardifference = (parseInt(edate[0]) -parseInt( sdate[0]));
+  let monthdifference = (parseInt(edate[1]) -parseInt( sdate[1]));
+  let datedifference = (parseInt(edate[2]) -parseInt( sdate[2]));
   const finalPost = { ...post, CreatedBYId: req.userId };
-  console.log(finalPost);
   const newPost = new CreateCampaign(finalPost);
   try {
-    if (yeardifference == 0 && monthdifference >= 0 && datedifference >= 1) {
+    if ((yeardifference == 0 && ( monthdifference >0 || (monthdifference==0 && datedifference>0)))|| yeardifference > 0) {
       await newPost.save();
       res.status(201).json({ newPost });
     } else {
