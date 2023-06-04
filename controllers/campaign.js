@@ -149,32 +149,34 @@ const joinCampaign = async (req, res) => {
   const uID = req.userId;
   const cID = "6478d77b555fb0eb6aac5c27";
   //req.body.campaignId;
-  const campaign = await CreateCampaign.findById(cID);
-  let noVolunteer = campaign.VoluntersNeeded;
-  if (noVolunteer <= 0) {
-    return res.status(403).json({ message: "No More volunteer needed" });
-  } else {
-    let ar = campaign.VolunteersJoined;
-    if (check(uID, ar))
-      return res.status(403).json({ message: "Already Joined" });
-    noVolunteer = noVolunteer - 1;
-    ar.push(uID);
-    CreateCampaign.findByIdAndUpdate(
-      { _id: cID },
-      { VoluntersNeeded: noVolunteer, VolunteersJoined: ar },
-      { new: true }
-    ).then(() => {
-      res.status(200).json({ message: "Volunteer added in campaign" });
+  await CreateCampaign.findById(cID).then((campaign) => {
+    let noVolunteer = campaign.VoluntersNeeded;
+    if (noVolunteer <= 0) {
+      return res.status(403).json({ message: "No More volunteer needed" });
+    } else {
+      let ar = campaign.VolunteersJoined;
+      if (check(uID, ar))
+        return res.status(403).json({ message: "Already Joined" });
+      noVolunteer = noVolunteer - 1;
+      ar.push(uID);
+      CreateCampaign.findByIdAndUpdate(
+        { _id: cID },
+        { VoluntersNeeded: noVolunteer, VolunteersJoined: ar },
+        { new: true }
+      ).then(() => {
+        res.status(200).json({ message: "Volunteer added in campaign" });
+      });
+    }
+    loginUser.findById(uID).then((Volunteer) => {
+      let ar = Volunteer.campaigns;
+      ar.push(cID);
+      loginUser
+        .findByIdAndUpdate({ _id: uID }, { campaigns: ar }, { new: true })
+        .then(() => {
+          res.status(200).json({ message: "Volunteer Joined" });
+        });
     });
-  }
-  const Volunteer = await loginUser.findById(uID);
-  let ar = Volunteer.campaigns;
-  ar.push(cID);
-  loginUser
-    .findByIdAndUpdate({ _id: uID }, { campaigns: ar }, { new: true })
-    .then(() => {
-      res.status(200).json({ message: "Volunteer Joined" });
-    });
+  });
 };
 
 const SearchCampaign = async (req, res) => {
@@ -210,22 +212,31 @@ const SearchOrganization = async (req, res) => {
 const rating = async (req, res) => {
   const uID = req.userId;
   const rating = req.body.rating;
-  const usr = await loginUser.findById(uID);
-  let prevReviewCnt = usr.reviewCount;
-  let total = usr.Total;
-  total = total + rating;
-  prevReviewCnt = prevReviewCnt + 1;
-  let newRating = total / prevReviewCnt;
-  newRating = Math.floor(newRating);
-  loginUser
-    .findByIdAndUpdate(
-      { _id: uID },
-      { rating: newRating, reviewCount: prevReviewCnt, Total: total },
-      { new: true }
-    )
-    .then((user) => {
-      res.status(200).json({ message: "Successfully Rated" });
-    });
+  await loginUser.findById(uID).then((usr) => {
+    let prevReviewCnt = usr.reviewCount;
+    let total = usr.Total;
+    total = total + rating;
+    prevReviewCnt = prevReviewCnt + 1;
+    let newRating = total / prevReviewCnt;
+    newRating = Math.floor(newRating);
+    loginUser
+      .findByIdAndUpdate(
+        { _id: uID },
+        { rating: newRating, reviewCount: prevReviewCnt, Total: total },
+        { new: true }
+      )
+      .then((user) => {
+        res.status(200).json({ message: "Successfully Rated" });
+      });
+  });
+};
+
+const getCampaignsByCid = (req, res) => {
+  const cID = req.params.campaignId;
+  CreateCampaign.findById(cID).then((camp) => {
+    if (camp) res.status(200).json(camp);
+    else res.status(404).json({ message: "Campaign Not Found" });
+  });
 };
 
 module.exports = {
@@ -240,4 +251,5 @@ module.exports = {
   SearchOrganization,
   rating,
   uploadCampaignImage,
+  getCampaignsByCid,
 };
