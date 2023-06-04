@@ -26,6 +26,54 @@ const addcampaign = async (req, res) => {
   } catch (error) {
     res.status(409).json({ message: error.message });
   }
+  //------------------------------------------------------------------------------------------------
+  let dataEntry = {
+    asset_id: "",
+    public_id: "",
+    url: "",
+  };
+  const filePath = req.body.filePath;
+  const ext = filePath.slice(-3);
+  if (
+    ext == "png" ||
+    ext == "jpg" ||
+    ext == "jpeg" ||
+    ext == "gif" ||
+    ext == "svg"
+  ) {
+    response = cloudinary.uploader.upload(filePath);
+    response.then((data) => {
+      dataEntry.asset_id = data.asset_id;
+      dataEntry.public_id = data.public_id;
+      dataEntry.url = data.secure_url;
+    });
+    if (req.body.campaignId != null) {
+      const cID = req.body.campaignId;
+      loginUser.findByIdAndUpdate(
+        { _id: cID },
+        {
+          image_asset_id: dataEntry.asset_id,
+          image_public_id: dataEntry.public_id,
+          image_url: dataEntry.url,
+        },
+        { new: true }
+      );
+    } else {
+      const uID = req.userId;
+      loginUser.findByIdAndUpdate(
+        { _id: uID },
+        {
+          image_asset_id: dataEntry.asset_id,
+          image_public_id: dataEntry.public_id,
+          image_url: dataEntry.url,
+        },
+        { new: true }
+      );
+    }
+    return res.status(200).json({ message: "Image Uploaded Successfully" });
+  } else {
+    return res.status(403).json({ message: "Invalid File Type" });
+  }
 };
 
 const UpdateCampaign = async (req, res) => {
