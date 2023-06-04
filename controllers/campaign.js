@@ -239,6 +239,61 @@ const getCampaignsByCid = (req, res) => {
   });
 };
 
+const editCampaignImage = async (req, res) => {
+  const cID = req.body.campaignId;
+  const filePath = req.body.filePath;
+  const ext = filePath.slice(-3);
+  let dataEntry = {
+    url: "",
+  };
+  if (
+    ext == "png" ||
+    ext == "jpg" ||
+    ext == "peg" ||
+    ext == "gif" ||
+    ext == "svg"
+  ) {
+    await CreateCampaign.findById(cID).then((camp) => {
+      cloudinary.uploader
+        .upload(filePath, {
+          public_id: camp.image_public_id,
+          asset_id: camp.image_asset_id,
+        })
+        .then((data) => {
+          dataEntry.url = data.secure_url;
+          CreateCampaign.findByIdAndUpdate(
+            { _id: cID },
+            { image_url: dataEntry.url },
+            { new: true }
+          ).then(() => {
+            return res
+              .status(200)
+              .json({ message: "Image Uploaded Successfully" });
+          });
+        });
+    });
+  } else {
+    return res.status(403).json({ message: "Invalid File Type" });
+  }
+};
+
+const getCampaignByCreatorId = (req, res) => {
+  const creatorID = req.userId;
+  try {
+    CreateCampaign.find({ CreatedBYId: creatorID })
+      .then((camp) => {
+        res.status(200).json(camp);
+      })
+      .catch((error) => {
+        res.status(404).json({ message: error.message });
+      });
+  } catch {
+    (error) => {
+      res.status(309).json({ error });
+    };
+  }
+};
+
 module.exports = {
   addcampaign,
   UpdateCampaign,
@@ -252,4 +307,6 @@ module.exports = {
   rating,
   uploadCampaignImage,
   getCampaignsByCid,
+  editCampaignImage,
+  getCampaignByCreatorId,
 };

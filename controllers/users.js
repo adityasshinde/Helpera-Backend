@@ -268,12 +268,51 @@ const uploadUserImage = (req, res) => {
   }
 };
 
+const editUserImage = async (req, res) => {
+  const uID = req.userId;
+  const filePath = req.body.filePath;
+  const ext = filePath.slice(-3);
+  let dataEntry = {
+    url: "",
+  };
+  if (
+    ext == "png" ||
+    ext == "jpg" ||
+    ext == "peg" ||
+    ext == "gif" ||
+    ext == "svg"
+  ) {
+    await CreateCampaign.findById(uID).then((camp) => {
+      cloudinary.uploader
+        .upload(filePath, {
+          public_id: camp.image_public_id,
+          asset_id: camp.image_asset_id,
+        })
+        .then((data) => {
+          dataEntry.url = data.secure_url;
+          CreateCampaign.findByIdAndUpdate(
+            { _id: uID },
+            { image_url: dataEntry.url },
+            { new: true }
+          ).then(() => {
+            return res
+              .status(200)
+              .json({ message: "Image Uploaded Successfully" });
+          });
+        });
+    });
+  } else {
+    return res.status(403).json({ message: "Invalid File Type" });
+  }
+};
+
 module.exports = {
   signin,
   signup,
   changePassword,
   userDetail,
   uploadUserImage,
+  editUserImage,
 };
 
 // try {
