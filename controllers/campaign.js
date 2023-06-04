@@ -7,8 +7,8 @@ const moment = require("moment");
 const addcampaign = async (req, res) => {
   const post = req.body;
   const { startDate, endDate } = req.body;
-  const { sdate } = startDate.split("-");
-  const { edate } = endDate.split("-");
+  const sdate = startDate.split("-");
+  const edate = endDate.split("-");
   let datedifference = Math.abs(edate[0] - sdate[0]);
   let monthdifference = Math.abs(edate[1] - sdate[1]);
   let yeardifference = Math.abs(edate[2] - sdate[2]);
