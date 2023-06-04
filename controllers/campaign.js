@@ -3,6 +3,13 @@ const { CreateCampaign, loginUser } = require("../models/details");
 const multer = require("multer");
 const url = require("url");
 const moment = require("moment");
+const cloudinary = require("cloudinary");
+
+cloudinary.config({
+  cloud_name: "dvbkkyuso",
+  api_key: "373452323229221",
+  api_secret: "aIyjinhb8eG2pWkKduB0ldSQlKg",
+});
 
 const addcampaign = async (req, res) => {
   const post = req.body;
@@ -26,7 +33,9 @@ const addcampaign = async (req, res) => {
   } catch (error) {
     res.status(409).json({ message: error.message });
   }
-  //------------------------------------------------------------------------------------------------
+};
+
+const uploadCampaignImage = async (req, res) => {
   let dataEntry = {
     asset_id: "",
     public_id: "",
@@ -41,15 +50,12 @@ const addcampaign = async (req, res) => {
     ext == "gif" ||
     ext == "svg"
   ) {
-    response = cloudinary.uploader.upload(filePath);
-    response.then((data) => {
+    response = cloudinary.uploader.upload(filePath).then((data) => {
       dataEntry.asset_id = data.asset_id;
       dataEntry.public_id = data.public_id;
       dataEntry.url = data.secure_url;
-    });
-    if (req.body.campaignId != null) {
       const cID = req.body.campaignId;
-      loginUser.findByIdAndUpdate(
+      CreateCampaign.findByIdAndUpdate(
         { _id: cID },
         {
           image_asset_id: dataEntry.asset_id,
@@ -58,19 +64,8 @@ const addcampaign = async (req, res) => {
         },
         { new: true }
       );
-    } else {
-      const uID = req.userId;
-      loginUser.findByIdAndUpdate(
-        { _id: uID },
-        {
-          image_asset_id: dataEntry.asset_id,
-          image_public_id: dataEntry.public_id,
-          image_url: dataEntry.url,
-        },
-        { new: true }
-      );
-    }
-    return res.status(200).json({ message: "Image Uploaded Successfully" });
+      return res.status(200).json({ message: "Image Uploaded Successfully" });
+    });
   } else {
     return res.status(403).json({ message: "Invalid File Type" });
   }
@@ -152,7 +147,8 @@ function check(id, ar) {
 
 const joinCampaign = async (req, res) => {
   const uID = req.userId;
-  const cID = req.body.campaignId;
+  const cID = "6478d77b555fb0eb6aac5c27";
+  //req.body.campaignId;
   const campaign = await CreateCampaign.findById(cID);
   let noVolunteer = campaign.VoluntersNeeded;
   if (noVolunteer <= 0) {
@@ -243,4 +239,5 @@ module.exports = {
   SearchCampaign,
   SearchOrganization,
   rating,
+  uploadCampaignImage,
 };

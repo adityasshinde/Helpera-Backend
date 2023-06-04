@@ -53,6 +53,18 @@ const loginSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
+  image_asset_id: {
+    type: String,
+    default: "",
+  },
+  image_public_id: {
+    type: String,
+    default: "",
+  },
+  image_url: {
+    type: String,
+    default: "",
+  },
 });
 
 const campaignSchema = mongoose.Schema({
@@ -120,6 +132,18 @@ const campaignSchema = mongoose.Schema({
   brochure: {
     data: Buffer,
     contentType: String,
+  },
+  image_asset_id: {
+    type: String,
+    default: "",
+  },
+  image_public_id: {
+    type: String,
+    default: "",
+  },
+  image_url: {
+    type: String,
+    default: "",
   },
 });
 const loginUser = mongoose.model("loginUser", loginSchema);

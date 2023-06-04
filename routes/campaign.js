@@ -11,6 +11,7 @@ const {
   SearchCampaign,
   SearchOrganization,
   rating,
+  uploadCampaignImage,
 } = require("../controllers/campaign");
 const auth = require("../middlewares/auth");
 const roles = require("../middlewares/roles");
@@ -24,4 +25,5 @@ router.route("/joinCampaign").post(auth, joinCampaign);
 router.route("/SearchCampaign").get(SearchCampaign);
 router.route("/SearchOrganization").get(SearchOrganization);
 router.route("/rating").post(auth, roles, rating);
+router.route("/uploadbrochure").post(auth, roles, uploadCampaignImage);
 module.exports = router;
