@@ -147,8 +147,7 @@ function check(id, ar) {
 
 const joinCampaign = async (req, res) => {
   const uID = req.userId;
-  const cID = "6478d77b555fb0eb6aac5c27";
-  //req.body.campaignId;
+  const cID = req.body.campaignId;
   await CreateCampaign.findById(cID).then((campaign) => {
     let noVolunteer = campaign.VoluntersNeeded;
     if (noVolunteer <= 0) {
@@ -173,7 +172,8 @@ const joinCampaign = async (req, res) => {
       loginUser
         .findByIdAndUpdate({ _id: uID }, { campaigns: ar }, { new: true })
         .then(() => {
-          res.status(200).json({ message: "Volunteer Joined" });
+          // res.status(200).json({ message: "Volunteer Joined" });
+          // dont do anything here
         });
     });
   });
