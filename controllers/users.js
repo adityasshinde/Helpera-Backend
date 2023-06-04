@@ -2,6 +2,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const { loginUser, CreateCampaign } = require("../models/details");
+const cloudinary = require("cloudinary");
+
+cloudinary.config({
+  cloud_name: "dvbkkyuso",
+  api_key: "373452323229221",
+  api_secret: "aIyjinhb8eG2pWkKduB0ldSQlKg",
+});
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
@@ -217,7 +224,57 @@ const signUpOrg = async (req, res) => {
     res.status(500).json({ message: "something went wrong" });
   }
 };
-module.exports = { signin, signup, changePassword, userDetail };
+
+const uploadUserImage = (req, res) => {
+  let dataEntry = {
+    asset_id: "",
+    public_id: "",
+    url: "",
+  };
+  const filePath = req.body.filePath;
+  const ext = filePath.slice(-3);
+  if (
+    ext == "png" ||
+    ext == "jpg" ||
+    ext == "peg" ||
+    ext == "gif" ||
+    ext == "svg"
+  ) {
+    response = cloudinary.uploader.upload(filePath).then((data) => {
+      dataEntry.asset_id = data.asset_id;
+      dataEntry.public_id = data.public_id;
+      dataEntry.url = data.secure_url;
+      console.log(data);
+      console.log(dataEntry);
+      const uID = req.userId;
+      console.log(uID);
+      loginUser
+        .findByIdAndUpdate(
+          { _id: uID },
+          {
+            image_asset_id: dataEntry.asset_id,
+            image_public_id: dataEntry.public_id,
+            image_url: dataEntry.url,
+          },
+          { new: true }
+        )
+        .then(() => {
+          console.log("Uploaded");
+        });
+      return res.status(200).json({ message: "Image Uploaded Successfully" });
+    });
+  } else {
+    return res.status(403).json({ message: "Invalid File Type" });
+  }
+};
+
+module.exports = {
+  signin,
+  signup,
+  changePassword,
+  userDetail,
+  uploadUserImage,
+};
 
 // try {
 //   loginUser

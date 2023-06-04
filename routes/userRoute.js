@@ -5,6 +5,7 @@ const {
   signup,
   changePassword,
   userDetail,
+  uploadUserImage,
 } = require("../controllers/users");
 const auth = require("../middlewares/auth");
 //router.route("/signin").post(signin);
@@ -17,4 +18,5 @@ router.post("/signup", signup);
 router.patch("/forgotPassword", changePassword);
 //router.get(":/id/userDetail", auth, userDetail);
 router.route("/userDetail").get(auth, userDetail);
+router.route("/addimage").post(auth, uploadUserImage);
 module.exports = router;
