@@ -195,7 +195,7 @@ const SearchCampaign = async (req, res) => {
 };
 
 const SearchOrganization = async (req, res) => {
-  const searchTerm = "testOrg Sanstha";
+  const searchTerm = req.query.search;
   try {
     // Find campaigns that match the search term
     await CreateCampaign.find({
