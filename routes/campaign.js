@@ -29,7 +29,7 @@ router.route("/SearchCampaign").get(SearchCampaign);
 router.route("/SearchOrganization").get(SearchOrganization);
 router.route("/rating").post(auth, roles, rating);
 router.route("/uploadbrochure").post(auth, roles, uploadCampaignImage);
-router.route("/getCampaignsByCid/").post(getCampaignsByCid);
+router.route("/getCampaignsByCid/:campaignId").get(getCampaignsByCid);
 router.route("/editbrochure").post(auth, roles, editCampaignImage);
 router.route("/getCampaignByCreatorID").post(auth, getCampaignByCreatorId);
 module.exports = router;
