@@ -74,6 +74,7 @@ const signup = async (req, res) => {
         });
       })
       .catch(async (newuser) => {
+        console.log(newuser);
         console.log("user doesn't exist");
         if (password != confirmPassword) {
           console.log("password doesn't match");
@@ -100,6 +101,7 @@ const signup = async (req, res) => {
           dif > 18
         ) {
           console.log("hello");
+          console.log(newuser);
           const result = await loginUser.create({
             username,
             email,
@@ -113,10 +115,11 @@ const signup = async (req, res) => {
             role: role,
           });
           console.log("user create");
+          console.log(newuser);
           const token = jwt.sign(
             {
-              id: newuser._id,
-              role: newuser.role,
+              id: result._id,
+              role: result.role,
             },
             "test",
             {
@@ -214,7 +217,7 @@ const signUpOrg = async (req, res) => {
           console.log("user create");
           console.log(result);
           const token = jwt.sign(
-            { id: newuser._id, role: newuser.role },
+            { id: result._id, role: result.role },
             "test",
             {
               expiresIn: "1h",
