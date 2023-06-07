@@ -94,10 +94,10 @@ const DeleteCampaign = async (req, res) => {
   }
   CreateCampaign.findByIdAndDelete({ _id: _id })
     .then((user) => {
-      res.json({ message: "successfully deleted" });
+      res.status(201).json({ message: "successfully deleted" });
     })
     .catch((error) => {
-      res.json({ message: error.message });
+      res.status(409).json({ message: error.message });
     });
 };
 
