@@ -65,13 +65,15 @@ const signup = async (req, res) => {
   try {
     console.log(email);
     await loginUser
-      .findOne({ username })
+      .findOne({
+        username: username,
+      })
       .then(async (existingUser) => {
         return res.status(400).json({
           message: ` ${existingUser.username} and ${existingUser.email} user already exist`,
         });
       })
-      .catch(async () => {
+      .catch(async (newuser) => {
         console.log("user doesn't exist");
         if (password != confirmPassword) {
           console.log("password doesn't match");
@@ -85,7 +87,7 @@ const signup = async (req, res) => {
         console.log(typeof dob);
         var birthdate = dob.split("-");
         console.log(birthdate);
-        var year = parseInt(birthdate[2]);
+        var year = parseInt(birthdate[0]);
         console.log(typeof year, year);
         const today = new Date();
         let curYear = today.getFullYear();
@@ -113,8 +115,8 @@ const signup = async (req, res) => {
           console.log("user create");
           const token = jwt.sign(
             {
-              id: existingUser._id,
-              role: existingUser.role,
+              id: newuser._id,
+              role: newuser.role,
             },
             "test",
             {
@@ -127,6 +129,7 @@ const signup = async (req, res) => {
         }
       });
   } catch {
+    console.log("error is comming up in catch bloack");
     res.status(500).json({ message: "something went wrong" });
   }
 };
@@ -178,13 +181,15 @@ const signUpOrg = async (req, res) => {
   try {
     console.log(email);
     await loginUser
-      .findOne({ username })
+      .findOne({
+        username: username,
+      })
       .then(async (existingUser) => {
         return res.status(400).json({
           message: ` ${existingUser.username} and ${existingUser.email} user already exist`,
         });
       })
-      .catch(async () => {
+      .catch(async (newuser) => {
         console.log("user doesn't exist");
         if (password != confirmPassword) {
           console.log("password doesn't match");
@@ -209,7 +214,7 @@ const signUpOrg = async (req, res) => {
           console.log("user create");
           console.log(result);
           const token = jwt.sign(
-            { id: existingUser._id, role: result.role },
+            { id: newuser._id, role: newuser.role },
             "test",
             {
               expiresIn: "1h",
