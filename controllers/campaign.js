@@ -1,9 +1,20 @@
 const { default: mongoose } = require("mongoose");
 const { CreateCampaign, loginUser } = require("../models/details");
-const multer = require("multer");
 const url = require("url");
 const moment = require("moment");
-const cloudinary = require("cloudinary");
+const cloudinary = require("cloudinary").v2;
+const express = require("express");
+const multer = require("multer");
+const fs = require("fs");
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 
 cloudinary.config({
   cloud_name: "dvbkkyuso",
@@ -41,34 +52,28 @@ const uploadCampaignImage = async (req, res) => {
     public_id: "",
     url: "",
   };
-  const filePath = req.body.filePath;
-  const ext = filePath.slice(-3);
-  if (
-    ext == "png" ||
-    ext == "jpg" ||
-    ext == "jpeg" ||
-    ext == "gif" ||
-    ext == "svg"
-  ) {
-    response = cloudinary.uploader.upload(filePath).then((data) => {
-      dataEntry.asset_id = data.asset_id;
-      dataEntry.public_id = data.public_id;
-      dataEntry.url = data.secure_url;
-      const cID = req.body.campaignId;
-      CreateCampaign.findByIdAndUpdate(
-        { _id: cID },
-        {
-          image_asset_id: dataEntry.asset_id,
-          image_public_id: dataEntry.public_id,
-          image_url: dataEntry.url,
-        },
-        { new: true }
-      );
-      return res.status(200).json({ message: "Image Uploaded Successfully" });
+  const assetID = req.body.asset_id;
+  const publicID = req.body.public_id;
+  const url = req.body.url;
+  const cID = req.body.campaignId;
+  dataEntry.asset_id = assetID;
+  dataEntry.public_id = publicID;
+  dataEntry.url = url;
+  CreateCampaign.findByIdAndUpdate(
+    { _id: cID },
+    {
+      image_asset_id: dataEntry.asset_id,
+      image_public_id: dataEntry.public_id,
+      image_url: dataEntry.url,
+    },
+    { new: true }
+  )
+    .then(() => {
+      res.status(201).json({ message: "Image Uploaded Successfully" });
+    })
+    .catch((error) => {
+      res.status(409).json({ message: error.message});
     });
-  } else {
-    return res.status(403).json({ message: "Invalid File Type" });
-  }
 };
 
 const UpdateCampaign = async (req, res) => {
