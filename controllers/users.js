@@ -165,16 +165,16 @@ const changePassword = async (req, res) => {
   } catch {}
 };
 
-const userDetail = (req, res) => {
+const userDetail = async(req, res) => {
   if (!req.userId) {
     return res.json({ message: "Unauthenticated" });
   }
   try {
-    loginUser.findById(req.userId).then((user) => {
-      //CreateCampaign.findById({ $ne: id }).then((campaign) => {
-      res.status(200).json({ user });
-      // });
-    });
+    const userinfo=await loginUser.findById(req.userId);
+    let newResult = JSON.parse(JSON.stringify(userinfo));
+    delete newResult.password;
+      delete newResult.SecurityQuestion;
+      res.status(200).json({ newResult });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
