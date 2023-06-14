@@ -26,6 +26,11 @@ const signin = async (req, res) => {
           return res.status(404).json({ message: "password is wrong" });
         }
         console.log(existingUser.role);
+
+        let newResult = JSON.parse(JSON.stringify(existingUser));
+        delete newResult.password;
+        delete newResult.SecurityQuestion;
+
         const token = jwt.sign(
           {
             id: existingUser._id,
@@ -34,7 +39,7 @@ const signin = async (req, res) => {
           "test",
           { expiresIn: "1h" }
         );
-        res.status(200).json({ result: existingUser, token });
+        res.status(200).json({ result: newResult, token });
       })
       .catch(() => {
         return res.status(404).json({ message: "user doesnt exist" });
@@ -114,6 +119,11 @@ const signup = async (req, res) => {
             SecurityQuestion: securityQuestion,
             role: role,
           });
+
+          let newResult = JSON.parse(JSON.stringify(result));
+          delete newResult.password;
+          delete newResult.SecurityQuestion;
+
           console.log("user create");
           console.log(newuser);
           const token = jwt.sign(
@@ -126,7 +136,8 @@ const signup = async (req, res) => {
               expiresIn: "1h",
             }
           );
-          res.status(200).json({ result, token });
+
+          res.status(200).json({ newResult, token });
         } else {
           res.status(500).json({ message: "something is wrong" });
         }
@@ -214,6 +225,11 @@ const signUpOrg = async (req, res) => {
             SecurityQuestion: securityQuestion,
             role: role,
           });
+
+          let newResult = JSON.parse(JSON.stringify(result));
+          delete newResult.password;
+          delete newResult.SecurityQuestion;
+
           console.log("user create");
           console.log(result);
           const token = jwt.sign(
@@ -223,7 +239,7 @@ const signUpOrg = async (req, res) => {
               expiresIn: "1h",
             }
           );
-          res.status(200).json({ result, token });
+          res.status(200).json({ newResult, token });
         } else {
           res.status(500).json({ message: "something is wrong" });
         }
