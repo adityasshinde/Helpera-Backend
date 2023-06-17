@@ -39,7 +39,7 @@ const signin = async (req, res) => {
           "test",
           { expiresIn: "1h" }
         );
-        res.status(200).json({ result: newResult, token });
+        res.status(200).json({ newResult, token });
       })
       .catch(() => {
         return res.status(404).json({ message: "user doesnt exist" });
